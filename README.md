@@ -17,3 +17,8 @@ This is an application that hosts a variety of services for hair service admins.
 - To Run the application
   - `> flask run`
   - Navigate to browser go to `localhost`
+
+## Contributing
+- Visit the [Iteration Board](https://github.com/ics499-capstone/hair-service-scheduler/projects/1)
+- Pick out a task in the "To do" Column
+- When working on a ticket, please commit the ticket number onto the commit message
