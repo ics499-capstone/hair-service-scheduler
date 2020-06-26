@@ -17,4 +17,4 @@ FLASK_RUN_PORT=80
 SQLALCHEMY_DATABASE_URI=sqlite:///app.db
 
 # signal flask everytime database changes (development purposes)
-SQLALCHEMY_TRACK_MODIFICATIONS=True
+SQLALCHEMY_TRACK_MODIFICATIONS=False
