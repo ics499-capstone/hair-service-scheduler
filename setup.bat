@@ -10,3 +10,10 @@ ECHO ** Installing flask complete
 ECHO Installing DotEnv
 pip install python-dotenv
 ECHO ** Installing python-dotenv complete
+
+:: Install flask-migrate
+ECHO Installing flask-migrate
+pip install flask-migrate
+ECHO ** Installing flask-migrate complete
+
+:: TODO: handle python dependencies better
