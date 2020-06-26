@@ -11,4 +11,4 @@ This is an application that hosts a variety of services for hair service admins.
   - `> setup`
 - To Run the application
   - `> flask run`
-  - localhost:5000
+  - Navigate to browser go to `localhost`
