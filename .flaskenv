@@ -10,8 +10,8 @@ FLASK_ENV=development
 # defaults to localhost
 FLASK_RUN_HOST=localhost
 
-# sets the port to 80
-FLASK_RUN_PORT=80
+# configure the port
+FLASK_RUN_PORT=5000
 
 # using SQLite
 SQLALCHEMY_DATABASE_URI=sqlite:///app.db
