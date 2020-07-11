@@ -4,6 +4,7 @@ from sqlalchemy import Integer, Enum
 from werkzeug.security import generate_password_hash
 from datetime import datetime
 
+# initialize here instead
 db = SQLAlchemy()
 
 class UserAccountType(enum.Enum):
