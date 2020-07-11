@@ -30,6 +30,9 @@ class UserAccount(db.Model):
   # register confirmation date
   register_complete = db.Column(db.DateTime, nullable=True, default=False)
 
+  # contraints
+  __table_args__ = (db.UniqueConstraint('username', 'email'),)
+
   # contructor
   def __init__(self, username, email, password):
     self.username = username

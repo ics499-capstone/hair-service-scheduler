@@ -31,9 +31,14 @@ def register():
 
     # check if there is already a user logged in
     # check if useraccount already exist
-    useraccount = UserAccount.query.filter_by(username=username).first()
-    if useraccount:
+    useraccount_username = UserAccount.query.filter_by(username=username).first()
+    if  useraccount_username:
       return '409 User already exist', 409
+
+    # check if email already exist
+    useraccount_email = UserAccount.query.filter_by(email=email).first()
+    if useraccount_email:
+      return '409 Existing account with associated email', 409
 
     # check if the password is equal to passwordConfirm
     if password != passwordConfirm:
