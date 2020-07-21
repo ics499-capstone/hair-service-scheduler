@@ -1,11 +1,17 @@
-from flask import Flask, Blueprint, jsonify, request, json
-from .models import UserAccount
+import functools
 
-register_bp = Blueprint('register', __name__)
+from flask import Blueprint, flash, g, redirect, jsonify, request, json, session, url_for
+from werkzeug.security import check_password_hash, generate_password_hash
 
-@register_bp.route('/api/user/register', methods=['POST'])
+# from flaskr.db import get_db
+
+bp = Blueprint('auth', __name__, url_prefix='/auth')
+
+# /auth/register
+@bp.route('/register', methods=['POST'])
 def register():
 
+    from flaskr.models import db, UserAccount
     json = request.get_json()
     transaction_keys = ['username' , 'email', 'password', 'passwordConfirm']
 

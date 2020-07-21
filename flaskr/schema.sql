@@ -1,0 +1,18 @@
+# deprecated
+DROP TABLE IF EXISTS account;
+DROP TABLE IF EXISTS user;
+
+CREATE TABLE account (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  username VARCHAR(16) UNIQUE NOT NULL,
+  password_hash VARCHAR(256) NOT NULL,
+  email VARCHAR(120) NOT NULL
+);
+
+CREATE TABLE user (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  firstname VARCHAR(32) NOT NULL,
+  lastname VARCHAR(32) NOT NULL,
+  account_id INTEGER NOT NULL,
+  FOREIGN KEY(account_id) REFERENCES account(id)
+);

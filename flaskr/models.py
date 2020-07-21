@@ -25,11 +25,11 @@ class UserAccount(db.Model):
   # account priviledge
   type = db.Column(Enum(UserAccountType), nullable=False, default=0)
   # register date
-  register_date = db.Column(db.DateTime, nullable=False)
+  # register_date = db.Column(db.DateTime, nullable=False)
   # register confirmation
-  register_confirmed = db.Column(db.Boolean, nullable=False, default=False)
+  # register_confirmed = db.Column(db.Boolean, nullable=False, default=False)
   # register confirmation date
-  register_complete = db.Column(db.DateTime, nullable=True, default=False)
+  # register_complete = db.Column(db.DateTime, nullable=True, default=False)
 
   # contraints
   __table_args__ = (db.UniqueConstraint('username', 'email'),)
