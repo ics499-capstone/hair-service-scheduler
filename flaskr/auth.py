@@ -3,14 +3,12 @@ import functools
 from flask import Blueprint, flash, g, redirect, jsonify, request, json, session, url_for
 from werkzeug.security import check_password_hash, generate_password_hash
 
-# from flaskr.db import get_db
-
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 # /auth/register
 @bp.route('/register', methods=['POST'])
 def register():
-
+    # get DB context from models
     from flaskr.models import db, UserAccount, User
 
     json = request.get_json()

@@ -36,13 +36,8 @@ def create_app(test_config=None):
   except OSError:
     pass
 
-  # register db commands
-  # from . import db
-  # db.init_app(app)
-
   # register blueprints
   from . import auth
   app.register_blueprint(auth.bp)
 
   return app
-#end
