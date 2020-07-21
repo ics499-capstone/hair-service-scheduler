@@ -1,0 +1,29 @@
+title Registration
+
+actor Frontend
+
+Frontend -> Backend : POST auth/register
+
+activate Backend
+
+note right of Backend:validations occur
+
+database SQLite
+
+Backend -> SQLite : Verify
+
+Backend <-- SQLite : VerifiedResults
+
+deactivate Backend
+
+alt valid input
+  activate Backend
+  Backend -> SQLite : new UserAccount()
+  Backend <-- SQLite : results
+  Frontend <- Backend : HTTP Response (201)
+  deactivate Backend
+else invalid input
+  activate Backend
+  Frontend <- Backend : HTTP Response (4XX)
+  deactivate Backend
+end

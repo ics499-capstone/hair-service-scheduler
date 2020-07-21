@@ -53,6 +53,10 @@ def register():
 
     # tell the user to complete registration through email
     result = {
-      "status": "asd"
+      "status": "success",
+      "username": username,
+      "email": email,
+      "firstname": firstname,
+      "lastname": lastname
     }
     return jsonify({"results": result}), 201
