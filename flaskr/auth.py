@@ -44,11 +44,13 @@ def register():
 
     # create the useraccount
     newaccount = UserAccount(username, email, password)
-    newuser = User(firstname, lastname, newaccount.id)
-
-    # add the user to database
-    db.session.add(newuser)
     db.session.add(newaccount)
+    db.session.flush() # update the id to constraint with user
+
+    newuser = User(firstname, lastname, newaccount.id)
+    db.session.add(newuser)
+
+    # save
     db.session.commit()
 
     # tell the user to complete registration through email
