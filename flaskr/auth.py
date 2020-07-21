@@ -11,9 +11,10 @@ bp = Blueprint('auth', __name__, url_prefix='/auth')
 @bp.route('/register', methods=['POST'])
 def register():
 
-    from flaskr.models import db, UserAccount
+    from flaskr.models import db, UserAccount, User
+
     json = request.get_json()
-    transaction_keys = ['username' , 'email', 'password', 'passwordConfirm']
+    transaction_keys = ['username' , 'email', 'password', 'passwordConfirm', 'firstname', 'lastname']
 
     if not all (key in json for key in transaction_keys):
       return '400 Bad Request - missing fields', 400
@@ -22,6 +23,8 @@ def register():
     email = request.get_json()['email']
     password = request.get_json()['password']
     passwordConfirm = request.get_json()['passwordConfirm']
+    firstname = request.get_json()['firstname']
+    lastname = request.get_json()['lastname']
 
     # check if there is already a user logged in
     # check if useraccount already exist
@@ -37,11 +40,14 @@ def register():
     # check if the password is equal to passwordConfirm
     if password != passwordConfirm:
       return '401 Password mismatch', 401
+    # check if field exceed character length
 
     # create the useraccount
     newaccount = UserAccount(username, email, password)
+    newuser = User(firstname, lastname, newaccount.id)
 
     # add the user to database
+    db.session.add(newuser)
     db.session.add(newaccount)
     db.session.commit()
 

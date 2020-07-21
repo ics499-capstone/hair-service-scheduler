@@ -1,6 +1,6 @@
 import enum
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Integer, Enum
+from sqlalchemy import Integer, Enum, ForeignKey
 from werkzeug.security import generate_password_hash
 from datetime import datetime
 
@@ -12,6 +12,7 @@ class UserAccountType(enum.Enum):
   employee = 1
   admin = 2
 
+# useraccount table
 class UserAccount(db.Model):
   __tablename__ = "useraccount"
   # primary key
@@ -24,11 +25,8 @@ class UserAccount(db.Model):
   password_hash = db.Column(db.String(128))
   # account priviledge
   type = db.Column(Enum(UserAccountType), nullable=False, default=0)
-  # register date
   # register_date = db.Column(db.DateTime, nullable=False)
-  # register confirmation
   # register_confirmed = db.Column(db.Boolean, nullable=False, default=False)
-  # register confirmation date
   # register_complete = db.Column(db.DateTime, nullable=True, default=False)
 
   # contraints
@@ -44,3 +42,19 @@ class UserAccount(db.Model):
 
   def __repr__(self):
     return '<UserAccount {}>\n\t{}\n\t{}'.format(self.username, self.email, self.phone_number)
+
+# user table
+class User(db.Model):
+  __tablename__ = "user"
+  # primary key
+  id = db.Column(db.Integer, primary_key=True)
+  firstname = db.Column(db.String(64), nullable=False)
+  lastname = db.Column(db.String(64), nullable=False)
+  account_id = db.Column(db.Integer, db.ForeignKey('useraccount.id'), nullable=False)
+
+  def __init__(self, firstname, lastname, account_id):
+    self.firstname = firstname
+    self.lastname = lastname
+    self.account_id = account_id
+
+
