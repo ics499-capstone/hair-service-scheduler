@@ -4,6 +4,8 @@ from flask import Blueprint, flash, g, redirect, jsonify, request, json, session
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required
 from werkzeug.security import check_password_hash, generate_password_hash
 
+from json import dumps
+
 # init login manager
 login_manager = LoginManager()
 
@@ -122,7 +124,7 @@ def login():
 
   account = UserAccount.query.filter_by(username=username).first()
   if account is None or not account.authenticate(password):
-    flask('Invalid Username or Password')
+    flash('Invalid Username or Password')
     return 'Invalid Username or Password', 401
 
   login_user(account)
@@ -134,11 +136,13 @@ def login():
              .filter(User.account_id == account.id)
   '''
   user = User.query.filter_by(account_id=account.id).first()
-
+  account_type = dumps(account.type)
   result = {
     "status": "success",
     "firstname": user.firstname,
-    "lastname": user.lastname
+    "lastname": user.lastname,
+    "username": account.username,
+    "type": account_type
   }
   return jsonify({"results": result}), 201
 

@@ -30,6 +30,10 @@ def create_app(test_config=None):
   from flaskr.auth import login_manager
   login_manager.init_app(app)
 
+  # initialize commands
+  from . import commands
+  commands.init_app(app)
+
   # init migration
   migrate = Migrate(app, db)
 

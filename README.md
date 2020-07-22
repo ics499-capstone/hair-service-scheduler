@@ -20,9 +20,13 @@ This is an application that hosts a variety of services for hair service admins.
   - Navigate to browser go to `localhost`
   
 ### Migrations
-```flask db init```
-```flask db migrate -m <msg>```
-```flask db upgrade```
+- ```flask db init```
+- ```flask db migrate -m <msg>```
+- ```flask db upgrade```
+
+### Custom commands:
+- ```flask make-admin <username>```
+  - To elevate an account to Admin privilege
 
 ## Contributing
 - Visit the [Iteration Board](https://github.com/ics499-capstone/hair-service-scheduler/projects/1)

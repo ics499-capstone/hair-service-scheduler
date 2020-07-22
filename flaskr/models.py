@@ -8,7 +8,7 @@ from flask_login import UserMixin
 # initialize here instead
 db = SQLAlchemy()
 
-class UserAccountType(enum.Enum):
+class UserAccountType(int, enum.Enum):
   customer = 0
   employee = 1
   admin = 2
