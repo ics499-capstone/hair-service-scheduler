@@ -11,7 +11,8 @@ bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 @login_manager.user_loader
 def load_user(id):
-  return User.query.get(int(id))
+  from flaskr.models import UserAccount
+  return UserAccount.query.get(int(id))
 
 ''' # ---------------------------------
   Description:
