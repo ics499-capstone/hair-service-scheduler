@@ -44,7 +44,7 @@ class UserAccount(UserMixin, db.Model):
   # inherit is_authenticated, is_active, is_anonymous, get_id from UserMixin
 
   def __repr__(self):
-    return '<UserAccount {}>\n\t{}\n\t{}'.format(self.username, self.email, self.phone_number)
+    return '<UserAccount {}>\n\t{}\n\t{}'.format(self.username, self.email, self.type)
 
   def authenticate(self, password):
     return check_password_hash(self.password_hash, password)
@@ -63,4 +63,18 @@ class User(db.Model):
     self.lastname = lastname
     self.account_id = account_id
 
+# product table
+class Product(db.Model):
+  __tablename__ = "product"
+  id = db.Column(db.Integer, primary_key=True)
+  name = db.Column(db.String(64), nullable=True)
+  description = db.Column(db.String(512), nullable=False)
+  quantity = db.Column(db.Integer, nullable=False, default=0)
+  price = db.Column(db.Numeric, nullable=False)
 
+  # product constructor
+  def __init__(self, name, description, quantity, price):
+    self.name = name
+    self.description = description
+    self.quantity = quantity
+    self.price = price
