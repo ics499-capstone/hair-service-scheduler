@@ -1,5 +1,7 @@
 # ICS-499 Softare Engineering Capstone
 ## Hair Service Application
+[![Build Status](https://travis-ci.org/ics499-capstone/hair-service-scheduler.svg?branch=master)](https://travis-ci.org/ics499-capstone/hair-service-scheduler)
+
 ### About
 This is an application that hosts a variety of services for hair service admins.
 - Language: Python (version 3.8.0)
