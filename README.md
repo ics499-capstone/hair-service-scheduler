@@ -31,6 +31,9 @@ This is an application that hosts a variety of services for hair service admins.
 - ```flask make-admin <username>```
   - To elevate an account to Admin privilege
 
+### Continuous Integration
+- [travis](https://travis-ci.org/github/ics499-capstone/hair-service-scheduler)
+
 ## Contributing
 - Visit the [Iteration Board](https://github.com/ics499-capstone/hair-service-scheduler/projects/1)
 - Pick out a task in the "To do" Column
