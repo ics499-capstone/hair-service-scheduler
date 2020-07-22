@@ -8,14 +8,13 @@ bp = Blueprint('auth', __name__, url_prefix='/auth')
 # /auth/register
 @bp.route('/register', methods=['POST'])
 def register():
-    # get DB context from models
-    from flaskr.models import db, UserAccount, User
-
     json = request.get_json()
     transaction_keys = ['username' , 'email', 'password', 'passwordConfirm', 'firstname', 'lastname']
-
     if not all (key in json for key in transaction_keys):
       return '400 Bad Request - missing fields', 400
+
+    # get DB context from models
+    from flaskr.models import db, UserAccount, User
 
     username = request.get_json()['username']
     email = request.get_json()['email']
