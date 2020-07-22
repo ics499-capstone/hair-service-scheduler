@@ -1,11 +1,37 @@
 import functools
 
 from flask import Blueprint, flash, g, redirect, jsonify, request, json, session, url_for
+from flask_login import LoginManager, current_user, login_user
 from werkzeug.security import check_password_hash, generate_password_hash
+
+# init login manager
+login_manager = LoginManager()
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
-# /auth/register
+@login_manager.user_loader
+def load_user(id):
+  return User.query.get(int(id))
+
+''' # ---------------------------------
+  Description:
+    registers an account
+
+  Endpoint:
+    /auth/register
+
+  Parameters:
+    username (string):
+    password (string):
+    passwordConfirm (string):
+    email (string):
+    firstname (string):
+    lastname (string):
+
+  Return:
+    string,int
+
+''' # ---------------------------------
 @bp.route('/register', methods=['POST'])
 def register():
   json = request.get_json()
@@ -57,5 +83,60 @@ def register():
     "email": email,
     "firstname": firstname,
     "lastname": lastname
+  }
+  return jsonify({"results": result}), 201
+
+''' # ---------------------------------
+  Description:
+    logs into an existing account
+
+  Endpoint:
+    /auth/login
+
+  Parameters:
+    username (string):
+    password (string):
+
+  Return:
+    string []: {firstname, lastname}
+
+''' # ---------------------------------
+@bp.route('/login', methods=['POST'])
+def login():
+  json = request.get_json()
+
+  # check if needed fields are provided
+  transaction_keys = ['username' , 'password']
+  if not all (key in json for key in transaction_keys):
+    return '400 Bad Request - missing fields', 400
+
+  # check if user is already logged in
+  if current_user.is_authenticated:
+    return '409 User already logged in', 409
+
+  username = request.get_json()['username']
+  password = request.get_json()['password']
+
+  from flaskr.models import db, UserAccount, User
+
+  account = UserAccount.query.filter_by(username=username).first()
+  if account is None or not account.authenticate(password):
+    flask('Invalid Username or Password')
+    return 'Invalid Username or Password', 401
+
+  login_user(account)
+
+  ''' # join data to return back to client
+  userinfo = UserAccount.query\
+             .join(User, UserAccount.id == User.id)\
+             .add_columns(User.firstname, User.lastname)
+             .filter(User.account_id == account.id)
+  '''
+  user = User.query.filter_by(account_id=account.id).first()
+
+  result = {
+    "status": "success",
+    "firstname": user.firstname,
+    "lastname": user.lastname
   }
   return jsonify({"results": result}), 201

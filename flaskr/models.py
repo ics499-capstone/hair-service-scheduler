@@ -1,8 +1,9 @@
 import enum
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Integer, Enum, ForeignKey
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
+from flask_login import UserMixin
 
 # initialize here instead
 db = SQLAlchemy()
@@ -13,7 +14,7 @@ class UserAccountType(enum.Enum):
   admin = 2
 
 # useraccount table
-class UserAccount(db.Model):
+class UserAccount(UserMixin, db.Model):
   __tablename__ = "useraccount"
   # primary key
   id = db.Column(db.Integer, primary_key=True)
@@ -38,10 +39,15 @@ class UserAccount(db.Model):
     self.email = email
     self.password_hash = generate_password_hash(password, method='sha256')
     self.type = UserAccountType.customer
-    self.register_date = datetime.now()
+    # self.register_date = datetime.now()
+
+  # inherit is_authenticated, is_active, is_anonymous, get_id from UserMixin
 
   def __repr__(self):
     return '<UserAccount {}>\n\t{}\n\t{}'.format(self.username, self.email, self.phone_number)
+
+  def authenticate(self, password):
+    return check_password_hash(self.password_hash, password)
 
 # user table
 class User(db.Model):
