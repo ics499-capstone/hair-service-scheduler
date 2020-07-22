@@ -1,0 +1,29 @@
+title Elevate Account to Admin
+
+actor Admin
+
+Admin -> Backend : COMMAND make-admin
+
+activate Backend
+
+note right of Backend:validations occur
+
+database SQLite
+
+Backend -> SQLite : account_exist()
+Backend <-- SQLite : results
+
+Backend -> SQLite : is_admin()
+Backend <-- SQLite : results
+
+alt valid input
+  activate Backend
+  Backend -> SQLite : UPDATE account SET type = 2
+  Backend <-- SQLite : results
+  Admin <-- Backend : success
+  deactivate Backend
+else invalid input
+  activate Backend
+  Admin <-- Backend : fail
+  deactivate Backend
+end
