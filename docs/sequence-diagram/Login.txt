@@ -1,0 +1,31 @@
+title Login
+
+actor Frontend
+
+Frontend -> Backend : POST auth/login
+
+activate Backend
+
+note right of Backend:validations occur
+
+Backend -> Flask Login : is_authenticated()
+Backend <-- Flask Login : results
+
+database SQLite
+
+Backend -> SQLite : authenticate()
+Backend <-- SQLite : results
+
+deactivate Backend
+
+alt valid input
+  activate Backend
+  Backend -> Flask Login : login_user()
+  Backend <-- Flask Login : results
+  Frontend <- Backend : HTTP Response (201)
+  deactivate Backend
+else invalid input
+  activate Backend
+  Frontend <- Backend : HTTP Response (4XX)
+  deactivate Backend
+end
