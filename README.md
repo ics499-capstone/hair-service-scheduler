@@ -1,4 +1,4 @@
-# ICS-499 Softare Engineering Capstone
+# ICS-499 Software Engineering Capstone
 ## Hair Service Application
 [![Build Status](https://travis-ci.org/ics499-capstone/hair-service-scheduler.svg?branch=master)](https://travis-ci.org/ics499-capstone/hair-service-scheduler)
 
