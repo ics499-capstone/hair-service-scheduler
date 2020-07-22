@@ -1,7 +1,7 @@
 import functools
 
 from flask import Blueprint, flash, g, redirect, jsonify, request, json, session, url_for
-from flask_login import LoginManager, current_user, login_user
+from flask_login import LoginManager, current_user, login_user, logout_user, login_required
 from werkzeug.security import check_password_hash, generate_password_hash
 
 # init login manager
@@ -139,5 +139,27 @@ def login():
     "status": "success",
     "firstname": user.firstname,
     "lastname": user.lastname
+  }
+  return jsonify({"results": result}), 201
+
+''' # ---------------------------------
+  Description:
+    log out an existing account
+
+  Endpoint:
+    /auth/logout
+
+  Parameters:
+
+  Return:
+    string []: {firstname, lastname}
+
+''' # ---------------------------------
+@bp.route('/logout', methods=['POST'])
+@login_required
+def logout():
+  logout_user()
+  result = {
+    "status": "success"
   }
   return jsonify({"results": result}), 201
