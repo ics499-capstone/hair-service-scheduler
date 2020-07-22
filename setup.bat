@@ -12,5 +12,10 @@ setlocal enabledelayedexpansion
   SET "FLASK_ENV!=development" & echo FLASK_ENV=!FLASK_ENV!
   SET "SQLALCHEMY_DATABASE_URI=sqlite:///app.db" & echo FLASK_ENV=!SQLALCHEMY_DATABASE_URI!
   ECHO ** Environment variables setted!
+  
+  :: install the projext
+  ECHO ** Installing the project **
+  pip install -e .
+  ECHO ** Installation complete
 
 endlocal

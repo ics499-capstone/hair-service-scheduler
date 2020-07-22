@@ -24,6 +24,9 @@ This is an application that hosts a variety of services for hair service admins.
 - ```flask db migrate -m <msg>```
 - ```flask db upgrade```
 
+### Run tests
+- ```pytest -v```
+
 ### Custom commands:
 - ```flask make-admin <username>```
   - To elevate an account to Admin privilege
