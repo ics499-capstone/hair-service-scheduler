@@ -1,2 +1,2 @@
 ## UML Class Diagram
-[![uml.png](https://i.postimg.cc/DzSs8WCY/uml.png)](https://postimg.cc/2qf3t5N4)
+[![uml.png](https://github.com/ics499-capstone/hair-service-scheduler/blob/master/docs/class-diagram/uml.png)
