@@ -11,6 +11,7 @@ login_manager = LoginManager()
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
+# user_loader callback to reload user object from user id stored in session
 @login_manager.user_loader
 def load_user(id):
   from flaskr.models import UserAccount
