@@ -1,12 +1,25 @@
 import enum
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Integer, Enum, ForeignKey
+from sqlalchemy import Integer, Enum, ForeignKey, types
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from flask_login import UserMixin
+from decimal import Decimal as D
+
+class SqliteNumeric(types.TypeDecorator):
+  impl = types.String
+  def load_dialect_impl(self, dialect):
+    return dialect.type_descriptor(types.VARCHAR(100))
+  def process_bind_param(self, value, dialect):
+    return str(value)
+  def process_result_value(self, value, dialect):
+    return D(value)
 
 # initialize here instead
 db = SQLAlchemy()
+
+# over-ride the default Numeric
+db.Numeric = SqliteNumeric
 
 class UserAccountType(int, enum.Enum):
   customer = 0
