@@ -3,6 +3,7 @@ import functools
 from flask import Blueprint, flash, g, redirect, jsonify, request, json, session, url_for
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required
 from werkzeug.security import check_password_hash, generate_password_hash
+from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 
 from json import dumps
 
@@ -40,7 +41,10 @@ def load_user(id):
 def register():
   json = request.get_json()
   transaction_keys = ['username' , 'email', 'password', 'passwordConfirm', 'firstname', 'lastname']
-  if not all (key in json for key in transaction_keys):
+  if (
+      not all (key in json for key in transaction_keys) or
+      not request.is_json
+     ):
     return '400 Bad Request - missing fields', 400
 
   # get DB context from models
@@ -67,7 +71,11 @@ def register():
   # check if the password is equal to passwordConfirm
   if password != passwordConfirm:
     return '401 Password mismatch', 401
+
   # check if field exceed character length
+  # check if email is in right format
+  # check if password contains 1 uppercase, 1 special character, 1 number
+    # re.compile('^(?=\S{6,20}$)(?=.*?\d)(?=.*?[a-z])(?=.*?[A-Z])(?=.*?[^A-Za-z\s0-9])')
 
   # create the useraccount
   newaccount = UserAccount(username, email, password)
@@ -111,7 +119,10 @@ def login():
 
   # check if needed fields are provided
   transaction_keys = ['username' , 'password']
-  if not all (key in json for key in transaction_keys):
+  if (
+      not all (key in json for key in transaction_keys) or
+      not request.is_json
+     ):
     return '400 Bad Request - missing fields', 400
 
   # check if user is already logged in
@@ -145,7 +156,14 @@ def login():
     "username": account.username,
     "type": account_type
   }
-  return jsonify({"results": result}), 201
+
+  # create JSON web token
+  access_token = create_access_token(identity=username)
+
+  return jsonify({
+    "results": result,
+    "access_token": access_token
+  }), 201
 
 ''' # ---------------------------------
   Description:
@@ -168,3 +186,32 @@ def logout():
     "status": "success"
   }
   return jsonify({"results": result}), 201
+
+''' # ---------------------------------
+  Description:
+    Protected view using jwt_required (requires a valid access token)
+
+  Endpoint:
+    /auth/test
+
+  Parameters:
+
+  Return:
+    { "logged_in_as": user }
+
+  Test:
+    1) Log in (Hit endpoint: /auth/login)
+    2) grab the "access_token" from the response
+    3) Test
+      3.1) Click Authorization Tab
+      3.2) TYPE dropdown - Select: Bearer Token
+      3.3) PASTE access_token copied from part 2 and paste into Token (right panel)
+      3.4) Change the endpoint to /auth/test
+
+''' # ---------------------------------
+@bp.route('/test', methods=['POST'])
+@jwt_required
+def test():
+    # Access the identity of the current user with get_jwt_identity
+    user = get_jwt_identity()
+    return jsonify(logged_in_as=user), 200

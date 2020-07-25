@@ -14,6 +14,7 @@ def create_app(test_config=None):
     # DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
     SQLALCHEMY_TRACK_MODIFICATIONS=False,
     SQLALCHEMY_DATABASE_URI='sqlite:///app.db',
+    JWT_SECRET_KEY='hide-this-for-dear-life',
   )
 
   if test_config is None:
@@ -23,28 +24,32 @@ def create_app(test_config=None):
     # load the test config if passed in
     app.config.from_mapping(test_config)
 
-  # initialize to app but not yet bind
+  # register the SQLAlchemy instance with flask
   from flaskr.models import db
-  db.init_app(app) # must go after loading config
+  db.init_app(app)
 
+  # register the Login_Manager instance with flask
   from flaskr.auth import login_manager
   login_manager.init_app(app)
 
-  # initialize commands
+  # registers the custom commands with flask
   from . import commands
   commands.init_app(app)
 
-  # init migration
+  # registers the migrations with flask
   migrate = Migrate(app, db)
+
+  # registers the api blueprints with flask
+  from . import auth
+  app.register_blueprint(auth.bp)
+
+  from flaskr.jwt import jwt
+  jwt.init_app(app)
 
   # ensure the instance folder exists
   try:
     os.makedirs(app.instance_path)
   except OSError:
     pass
-
-  # register blueprints
-  from . import auth
-  app.register_blueprint(auth.bp)
 
   return app
