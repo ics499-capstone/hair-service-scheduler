@@ -60,7 +60,7 @@ def register():
   # check if there is already a user logged in
   # check if useraccount already exist
   useraccount_username = UserAccount.query.filter_by(username=username).first()
-  if  useraccount_username:
+  if useraccount_username:
     return '409 User already exist', 409
 
   # check if email already exist
@@ -213,5 +213,13 @@ def logout():
 @jwt_required
 def test():
     # Access the identity of the current user with get_jwt_identity
+    user = get_jwt_identity()
+    return jsonify(logged_in_as=user), 200
+
+from flaskr.jwt import admin_required
+
+@bp.route('/testadmin', methods=['POST'])
+@admin_required
+def testadmin():
     user = get_jwt_identity()
     return jsonify(logged_in_as=user), 200
