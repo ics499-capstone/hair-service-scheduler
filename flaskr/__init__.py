@@ -27,6 +27,16 @@ def create_app(test_config=None):
 
   CORS(app)
 
+  import logging, logging.config, yaml
+
+  # load the log configurations
+  log_conf = yaml.safe_load(open('./logging.yaml'))
+  # use the log configuration
+  logging.config.dictConfig(log_conf)
+  # init a log instance
+  console = logging.getLogger('console')
+  console.debug('Starting application')
+
   # register the SQLAlchemy instance with flask
   from flaskr.models import db
   db.init_app(app)

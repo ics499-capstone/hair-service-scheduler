@@ -44,7 +44,7 @@ class UserAccount(UserMixin, db.Model):
   # inherit is_authenticated, is_active, is_anonymous, get_id from UserMixin
 
   def __repr__(self):
-    return '<UserAccount {}>\n\t{}\n\t{}'.format(self.username, self.email, self.type)
+    return '(UserAccoount) {}:{}:admin={}'.format(self.username, self.email, self.type)
 
   def authenticate(self, password):
     return check_password_hash(self.password_hash, password)
@@ -79,3 +79,6 @@ class Product(db.Model):
     self.description = description
     self.quantity = quantity
     self.price = price
+
+  def __repr__(self):
+    return '(Product) {}:x{}:${}:desc={}'.format(self.name, self.quantity, self.price, self.description)

@@ -1,6 +1,9 @@
 from flask import Blueprint, request, json, jsonify
 from flaskr.jwt import admin_required
 
+import logging
+console = logging.getLogger('console')
+
 bp = Blueprint('admin', __name__, url_prefix='/admin')
 
 ''' # ---------------------------------
@@ -49,6 +52,8 @@ def addproduct():
   product = Product(name, description, quantity, price)
   db.session.add(product)
   db.session.commit()
+
+  console.debug('{} added!'.format(product))
 
   result = {
     "status": "success",
