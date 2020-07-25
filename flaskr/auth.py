@@ -10,7 +10,9 @@ from json import dumps
 # init login manager
 login_manager = LoginManager()
 
-bp = Blueprint('auth', __name__, url_prefix='/auth')
+API_URL = '/api/auth/'
+
+bp = Blueprint('auth', __name__, url_prefix=API_URL)
 
 # user_loader callback to reload user object from user id stored in session
 @login_manager.user_loader
@@ -40,7 +42,7 @@ def load_user(id):
 @bp.route('/register', methods=['POST'])
 def register():
   json = request.get_json()
-  transaction_keys = ['username' , 'email', 'password', 'passwordConfirm', 'firstname', 'lastname']
+  transaction_keys = ['username', 'email', 'password']
   if (
       not all (key in json for key in transaction_keys) or
       not request.is_json
@@ -53,9 +55,6 @@ def register():
   username = request.get_json()['username']
   email = request.get_json()['email']
   password = request.get_json()['password']
-  passwordConfirm = request.get_json()['passwordConfirm']
-  firstname = request.get_json()['firstname']
-  lastname = request.get_json()['lastname']
 
   # check if there is already a user logged in
   # check if useraccount already exist
@@ -69,8 +68,8 @@ def register():
     return '409 Existing account with associated email', 409
 
   # check if the password is equal to passwordConfirm
-  if password != passwordConfirm:
-    return '401 Password mismatch', 401
+  # if password != passwordConfirm:
+    # return '401 Password mismatch', 401
 
   # check if field exceed character length
   # check if email is in right format
@@ -82,8 +81,8 @@ def register():
   db.session.add(newaccount)
   db.session.flush() # update the id to constraint with user
 
-  newuser = User(firstname, lastname, newaccount.id)
-  db.session.add(newuser)
+  # newuser = User(firstname, lastname, newaccount.id)
+  # db.session.add(newuser)
 
   # save
   db.session.commit()
@@ -92,9 +91,7 @@ def register():
   result = {
     "status": "success",
     "username": username,
-    "email": email,
-    "firstname": firstname,
-    "lastname": lastname
+    "email": email
   }
   return jsonify({"results": result}), 201
 
@@ -138,7 +135,7 @@ def login():
   username = request.get_json()['username']
   password = request.get_json()['password']
 
-  from flaskr.models import db, UserAccount, User
+  from flaskr.models import db, UserAccount
 
   account = UserAccount.query.filter_by(username=username).first()
   if account is None or not account.authenticate(password):
@@ -153,12 +150,10 @@ def login():
              .add_columns(User.firstname, User.lastname)
              .filter(User.account_id == account.id)
   '''
-  user = User.query.filter_by(account_id=account.id).first()
+  # user = User.query.filter_by(account_id=account.id).first()
   account_type = dumps(account.type)
   result = {
     "status": "success",
-    "firstname": user.firstname,
-    "lastname": user.lastname,
     "username": account.username,
     "type": account_type
   }
