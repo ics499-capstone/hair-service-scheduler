@@ -127,6 +127,12 @@ def login():
 
   # check if user is already logged in
   if current_user.is_authenticated:
+    # check if session is already over.
+    user = get_jwt_identity()
+    if user is None:
+      logout_user()
+      flash ('Session Timed out!')
+      return 'Session Timed out!', 440
     return '409 User already logged in', 409
 
   username = request.get_json()['username']
@@ -136,7 +142,7 @@ def login():
 
   account = UserAccount.query.filter_by(username=username).first()
   if account is None or not account.authenticate(password):
-    flash('Invalid Username or Password')
+    flash ('Invalid Username or Password')
     return 'Invalid Username or Password', 401
 
   login_user(account)
