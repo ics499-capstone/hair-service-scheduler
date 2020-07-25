@@ -159,8 +159,11 @@ def login():
   access_token = create_access_token(identity=username)
 
   return jsonify({
-    "results": result,
-    "access_token": access_token
+    "id": account.id,
+    "username": account.username,
+    "access_token": access_token,
+    "email": account.email,
+    "role": account_type
   }), 201
 
 ''' # ---------------------------------
