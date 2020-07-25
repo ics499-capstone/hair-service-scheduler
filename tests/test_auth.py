@@ -24,17 +24,17 @@ def register(client, username, password, email):
     'password' : password, 
     'email' : email
   }
-  return client.post(''.join(API_URL, 'register'), data=dumps(payload), headers=headers)
+  return client.post(''.join((API_URL, 'register')), data=dumps(payload), headers=headers)
 
 def login(client, username, password):
   payload = {
     'username' : username,
     'password' : password
   }
-  return client.post(''.join(API_URL, 'login'), data=dumps(payload), headers=headers)
+  return client.post(''.join((API_URL, 'login')), data=dumps(payload), headers=headers)
 
 def logout(client):
-  return client.post(''.join(API_URL, 'logout'), headers=headers)
+  return client.post(''.join((API_URL, 'logout')), headers=headers)
 
 def test_login_cycle(client):
   # test registration

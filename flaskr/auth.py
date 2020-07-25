@@ -25,15 +25,12 @@ def load_user(id):
     registers an account
 
   Endpoint:
-    /auth/register
+    /api/auth/register
 
   Parameters:
     username (string):
     password (string):
-    passwordConfirm (string):
     email (string):
-    firstname (string):
-    lastname (string):
 
   Return:
     string,int
@@ -100,7 +97,7 @@ def register():
     logs into an existing account
 
   Endpoint:
-    /auth/login
+    /api/auth/login
 
   Parameters:
     username (string):
@@ -171,7 +168,7 @@ def login():
     log out an existing account
 
   Endpoint:
-    /auth/logout
+    /api/auth/logout
 
   Parameters:
 
