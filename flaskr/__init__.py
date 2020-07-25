@@ -40,8 +40,9 @@ def create_app(test_config=None):
   migrate = Migrate(app, db)
 
   # registers the api blueprints with flask
-  from . import auth
+  from . import auth, admin
   app.register_blueprint(auth.bp)
+  app.register_blueprint(admin.bp)
 
   from flaskr.jwt import jwt
   jwt.init_app(app)

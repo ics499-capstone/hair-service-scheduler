@@ -70,10 +70,11 @@ class Product(db.Model):
   name = db.Column(db.String(64), nullable=True)
   description = db.Column(db.String(512), nullable=False)
   quantity = db.Column(db.Integer, nullable=False, default=0)
-  price = db.Column(db.Numeric, nullable=False)
+  price = db.Column(db.Numeric(5, 2), nullable=False)
+  image = db.Column(db.String(256), nullable=True)
 
   # product constructor
-  def __init__(self, name, description, quantity, price):
+  def __init__(self, name, description, quantity, price, image=None):
     self.name = name
     self.description = description
     self.quantity = quantity

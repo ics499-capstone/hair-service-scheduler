@@ -30,7 +30,7 @@ This is an application that hosts a variety of services for hair service admins.
 - ```pytest -v```
 
 ### Custom commands:
-- ```flask make-admin <username>```
+- ```flask make-admin -u <username>```
   - To elevate an account to Admin privilege
 
 ### Continuous Integration

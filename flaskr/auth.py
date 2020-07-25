@@ -187,6 +187,7 @@ def login():
 @bp.route('/logout', methods=['POST'])
 @login_required
 def logout():
+  # TODO: if user is not logged in
   logout_user()
   result = {
     "status": "success"
