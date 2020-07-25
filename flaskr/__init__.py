@@ -2,6 +2,7 @@ import os
 
 from flask import Flask
 from flask_migrate import Migrate
+from flask_cors import CORS
 
 # app factory func
 def create_app(test_config=None):
@@ -23,6 +24,8 @@ def create_app(test_config=None):
   else:
     # load the test config if passed in
     app.config.from_mapping(test_config)
+
+  CORS(app)
 
   # register the SQLAlchemy instance with flask
   from flaskr.models import db
