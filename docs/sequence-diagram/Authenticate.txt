@@ -1,0 +1,53 @@
+title Register-Login-Logout :: Page Lifecycle
+
+actor Frontend
+
+Frontend -> Backend : POST auth/register \n { username, password, passwordConfirm \n email, firstname, lastname }
+
+activate Backend
+
+note right of Backend:validations occur
+
+database SQLite
+
+Backend -> SQLite : Verify
+
+Backend <-- SQLite : VerifiedResults
+
+deactivate Backend
+
+alt valid input
+  activate Backend
+  Backend -> SQLite : new UserAccount()
+  Backend <-- SQLite : results
+  Frontend <- Backend : HTTP Response (201) \n { status, username, email, firstname, lastname }
+  deactivate Backend
+else invalid input
+  activate Backend
+  Frontend <- Backend : HTTP Response (4XX) \n [409 User already exist \n 401 Password mismatch]
+  deactivate Backend
+end
+
+Frontend -> Backend : POST auth/login \n { username , password }
+
+activate Backend
+
+note right of Backend:validations occur
+
+database SQLite
+
+Backend -> SQLite : authenticate()
+Backend <-- SQLite : results
+
+deactivate Backend
+
+alt valid input
+  activate Backend
+  note right of Backend:generate Json Web Token (JWT)
+  Frontend <- Backend : HTTP Response (201) \n { results, access_token }
+  deactivate Backend
+else invalid input
+  activate Backend
+  Frontend <- Backend : HTTP Response (4XX) \n [400 Bad Request - missing fields \n 409 User already logged in]
+  deactivate Backend
+end
