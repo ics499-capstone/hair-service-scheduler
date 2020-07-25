@@ -216,6 +216,14 @@ def test():
     user = get_jwt_identity()
     return jsonify(logged_in_as=user), 200
 
+''' # ---------------------------------
+  Description:
+    Protected view using admin_required (requires a valid access token and admin rights)
+
+  Endpoint:
+    /auth/testadmin
+
+''' # ---------------------------------
 from flaskr.jwt import admin_required
 
 @bp.route('/testadmin', methods=['POST'])
