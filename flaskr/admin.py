@@ -17,6 +17,9 @@ bp = Blueprint('admin', __name__, url_prefix='/admin')
     quantity (int):
     price (float):
 
+  Permission:
+    admins
+
   Return:
 
 ''' # ---------------------------------
