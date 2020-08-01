@@ -149,11 +149,6 @@ def login():
   '''
   # user = User.query.filter_by(account_id=account.id).first()
   account_type = dumps(account.type)
-  result = {
-    "status": "success",
-    "username": account.username,
-    "type": account_type
-  }
 
   # create JSON web token
   access_token = create_access_token(identity=username)
@@ -184,10 +179,9 @@ def login():
 def logout():
   # TODO: if user is not logged in
   logout_user()
-  result = {
+  return jsonify({
     "status": "success"
-  }
-  return jsonify({"results": result}), 201
+  }), 201
 
 ''' # ---------------------------------
   Description:

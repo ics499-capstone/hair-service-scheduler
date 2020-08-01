@@ -4,7 +4,9 @@ from flaskr.jwt import admin_required
 import logging
 console = logging.getLogger('console')
 
-bp = Blueprint('admin', __name__, url_prefix='/admin')
+API_URL = '/api/admin/'
+
+bp = Blueprint('admin', __name__, url_prefix=API_URL)
 
 ''' # ---------------------------------
   Description:
