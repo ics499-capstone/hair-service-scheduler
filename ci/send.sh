@@ -78,6 +78,11 @@ WEBHOOK_DATA='{
         "value": "'"[\`$TRAVIS_BRANCH\`](https://github.com/$TRAVIS_REPO_SLUG/tree/$TRAVIS_BRANCH)"'",
         "inline": true
       }
+      {
+        "name": "Status",
+        "value": "'"$STATUS_MESSAGE"'",
+        "inline": true
+      }
     ],
     "timestamp": "'"$TIMESTAMP"'"
   } ]
