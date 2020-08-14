@@ -1,18 +1,24 @@
-import os
-import tempfile
-import pytest
-
-from flaskr import create_app
-from json import dumps
 from flask import request, json
+from flask_api import status
 
-headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+from func import client, add_product, login, logout, auth_header
 
-@pytest.fixture
-def client():
-  app = create_app()
-  app.config['TESTING'] = True
+# trying to enlist a product for sale
+def test_user_addproduct(client):
+  # name, description, quantity, price
+  r = add_product(client, "shampoo", "kiwi scent shampoo", 5, 9.99)
+  # requires admin permission
+  assert r.status_code == status.HTTP_401_UNAUTHORIZED
 
-  with app.test_client() as client:
-    yield client
-
+# logging in first as admin account
+def test_admin_addproduct(client):
+  # log out if need be
+  logout(client)
+  # log in admin account
+  r = login(client, 'admintest', 'admintest')
+  # extract the token and build new header with admin jwt
+  headers = auth_header(r)
+  # now add the product
+  r = add_product(client, "shampoo", "kiwi scent shampoo", 5, 9.99, headers)
+  # product created successfully or already exist
+  assert r.status_code == status.HTTP_201_CREATED or r.status_code == status.HTTP_409_CONFLICT

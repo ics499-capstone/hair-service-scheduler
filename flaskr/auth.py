@@ -181,7 +181,7 @@ def logout():
   logout_user()
   return jsonify({
     "status": "success"
-  }), status.HTTP_201_CREATED
+  }), status.HTTP_200_OK
 
 ''' # ---------------------------------
   Description:
