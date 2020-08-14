@@ -26,6 +26,10 @@ class UserAccountType(int, enum.Enum):
   employee = 1
   admin = 2
 
+  @classmethod
+  def exists(self, value):
+    return value in UserAccountType.__members__.values()
+
 # useraccount table
 class UserAccount(UserMixin, db.Model):
   __tablename__ = "useraccount"

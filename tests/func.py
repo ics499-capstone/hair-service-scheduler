@@ -9,6 +9,9 @@ from json import dumps
 from flask import request, json
 from flask_api import status
 
+AUTH_URL = '/api/auth/'
+ADMIN_URL = '/api/admin/'
+
 headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
 
 def auth_header(r):
@@ -23,9 +26,6 @@ def auth_header(r):
     'Authorization': auth_header
   }
   return headers
-
-AUTH_URL = '/api/auth/'
-ADMIN_URL = '/api/admin/'
 
 @pytest.fixture
 def client():
@@ -68,3 +68,9 @@ def del_product(client, name, headers=headers):
   }
   return client.post(''.join((ADMIN_URL, 'delproduct')), data=dumps(payload), headers=headers)
 
+def add_role(client, username, role, headers=headers):
+  payload = {
+    'username' : username,
+    'role' : role
+  }
+  return client.post(''.join((ADMIN_URL, 'addrole')), data=dumps(payload), headers=headers)

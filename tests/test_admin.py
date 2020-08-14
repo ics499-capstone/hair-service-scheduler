@@ -1,7 +1,8 @@
 from flask import request, json
 from flask_api import status
 
-from func import client, add_product, del_product, login, logout, auth_header
+from func import client, add_product, del_product, add_role, login, logout, register, auth_header
+from flaskr.models import UserAccountType
 
 # test: regular user trying to enlist a product for sale
 def test_user_addproduct(client):
@@ -42,4 +43,30 @@ def test_admin_delproduct(client):
   # delete the product
   r = del_product(client, "shampoo", headers)
   # should be able to
+  assert r.status_code == status.HTTP_200_OK
+
+# test: changing the role of an account
+def test_change_role(client):
+  # log out if need be
+  logout(client)
+  # change the role of an account (without priviledge)
+  r = add_role(client, 'admintest', 0)
+  # ensure failure due to requiring admin permission
+  assert r.status_code == status.HTTP_401_UNAUTHORIZED
+
+  # log in admin account
+  r = login(client, 'admintest', 'admintest')
+  # extract the token and build new header with admin jwt
+  headers = auth_header(r)
+
+  # try to make admin account to be admin (should fail)
+  r = add_role(client, 'admintest', UserAccountType.admin, headers)
+  assert r.status_code == status.HTTP_417_EXPECTATION_FAILED
+
+  # register a new account
+  r = register(client, "nonadmin", "nonadmin", "nonadmin@nonadmin.com")
+  print(r.status_code)
+
+  # elevate new account to employee
+  r = add_role(client, 'nonadmin', UserAccountType.employee, headers)
   assert r.status_code == status.HTTP_200_OK

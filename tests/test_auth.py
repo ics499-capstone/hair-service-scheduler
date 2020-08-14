@@ -3,9 +3,9 @@ from flask_api import status
 
 from func import client, register, login, logout
 
-def test_register(client):
-  r = register(client, "testlogin", "testpsw", "test@test.com")
-  assert r.status_code == status.HTTP_409_CONFLICT
+#def test_register(client):
+  #r = register(client, "testlogin", "testpsw", "test@test.com")
+  #assert r.status_code == status.HTTP_409_CONFLICT
 
 def test_login(client):
   r = login(client, "testlogin", "testpsw")

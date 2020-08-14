@@ -108,3 +108,60 @@ def delproduct():
     "status": "success",
   }
   return jsonify({"results": result}), status.HTTP_200_OK
+
+''' # ---------------------------------
+  Description:
+    change the role of a given user
+
+  Endpoint:
+    api/admin/addrole
+
+  Parameters:
+    username (string) : the target account
+    role (int) : the role (model::UserAccountType)
+
+  Permission:
+    admins
+
+''' # ---------------------------------
+@bp.route('/addrole', methods=['POST'])
+@admin_required
+def addrole():
+  json = request.get_json()
+  transaction_keys = ['username', 'role']
+  if (
+      not all (key in json for key in transaction_keys) or
+      not request.is_json
+     ):
+    return 'Missing fields', 11
+
+  # get the db handle and UserAccount, UserAccountType model
+  from flaskr.models import db, UserAccount, UserAccountType
+
+  # get the values from payload
+  username = request.get_json()['username']
+  role = request.get_json()['role']
+  
+  # check if the account exists
+  account = UserAccount.query.filter_by(username=username).first()
+  if account is None:
+    return 'This account does not exist', 22
+
+  # check if user is already the specified role
+  if account.type == role:
+    return 'No changes required', status.HTTP_417_EXPECTATION_FAILED
+
+  # check if the provided role is an eligable one
+  if not UserAccountType.exists(role):
+    return 'The specified role is not available', 33
+
+  # change the role
+  account.type = role
+  db.session.commit()
+
+  console.debug('{} privilege was elevated.'.format(username))
+
+  result = {
+    "status": "success",
+  }
+  return jsonify({"results": result}), status.HTTP_200_OK
