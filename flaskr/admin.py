@@ -1,5 +1,6 @@
 from flask import Blueprint, request, json, jsonify
 from flaskr.jwt import admin_required
+from flask_api import status
 
 import logging
 console = logging.getLogger('console')
@@ -37,7 +38,7 @@ def addproduct():
       not all (key in json for key in transaction_keys) or
       not request.is_json
      ):
-    return '400 Bad Request - missing fields', 400
+    return 'Missing fields', status.HTTP_400_BAD_REQUEST
 
   from flaskr.models import db, Product
 
@@ -48,7 +49,7 @@ def addproduct():
 
   product = Product.query.filter_by(name=name).first()
   if product:
-    return '409 Product already exist', 409
+    return 'Product already exist', status.HTTP_409_CONFLICT
 
   # create the product
   product = Product(name, description, quantity, price)
@@ -60,4 +61,4 @@ def addproduct():
   result = {
     "status": "success",
   }
-  return jsonify({"results": result}), 201
+  return jsonify({"results": result}), status.HTTP_201_CREATED
