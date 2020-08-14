@@ -145,18 +145,18 @@ def addrole():
   # check if the account exists
   account = UserAccount.query.filter_by(username=username).first()
   if account is None:
-    return 'This account does not exist', 22
+    return 'This account does not exist', status.HTTP_400_BAD_REQUEST
 
   # check if user is already the specified role
-  if account.type == role:
+  if account.type == UserAccountType(role):
     return 'No changes required', status.HTTP_417_EXPECTATION_FAILED
 
   # check if the provided role is an eligable one
   if not UserAccountType.exists(role):
-    return 'The specified role is not available', 33
+    return 'The specified role is not available', status.HTTP_400_BAD_REQUEST
 
   # change the role
-  account.type = role
+  account.type = UserAccountType(role)
   db.session.commit()
 
   console.debug('{} privilege was elevated.'.format(username))
