@@ -4,6 +4,7 @@ from flask import Blueprint, flash, g, redirect, jsonify, request, json, session
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
+from flask_api import status
 
 from json import dumps
 
@@ -44,7 +45,7 @@ def register():
       not all (key in json for key in transaction_keys) or
       not request.is_json
      ):
-    return '400 Bad Request - missing fields', 400
+    return 'Missing fields', status.HTTP_400_BAD_REQUEST
 
   # get DB context from models
   from flaskr.models import db, UserAccount, User
@@ -57,12 +58,12 @@ def register():
   # check if useraccount already exist
   useraccount_username = UserAccount.query.filter_by(username=username).first()
   if useraccount_username:
-    return '409 User already exist', 409
+    return 'User already exist', status.HTTP_409_CONFLICT
 
   # check if email already exist
   useraccount_email = UserAccount.query.filter_by(email=email).first()
   if useraccount_email:
-    return '409 Existing account with associated email', 409
+    return 'Existing account with associated email', status.HTTP_409_CONFLICT
 
   # check if the password is equal to passwordConfirm
   # if password != passwordConfirm:
@@ -90,7 +91,7 @@ def register():
     "username": username,
     "email": email
   }
-  return jsonify({"results": result}), 201
+  return jsonify({"results": result}), status.HTTP_201_CREATED
 
 ''' # ---------------------------------
   Description:
@@ -117,7 +118,7 @@ def login():
       not all (key in json for key in transaction_keys) or
       not request.is_json
      ):
-    return '400 Bad Request - missing fields', 400
+    return 'Missing fields', status.HTTP_400_BAD_REQUEST
 
   # check if user is already logged in
   if current_user.is_authenticated:
@@ -125,9 +126,8 @@ def login():
     user = get_jwt_identity()
     if user is None:
       logout_user()
-      flash ('Session Timed out!')
-      return 'Session Timed out!', 440
-    return '409 User already logged in', 409
+      return 'Session Timed out!', status.HTTP_406_NOT_ACCEPTABLE
+    return 'User already logged in', status.HTTP_409_CONFLICT
 
   username = request.get_json()['username']
   password = request.get_json()['password']
@@ -137,7 +137,7 @@ def login():
   account = UserAccount.query.filter_by(username=username).first()
   if account is None or not account.authenticate(password):
     flash ('Invalid Username or Password')
-    return 'Invalid Username or Password', 401
+    return 'Invalid Username or Password', status.HTTP_401_UNAUTHORIZED
 
   login_user(account)
 
@@ -159,7 +159,7 @@ def login():
     "access_token": access_token,
     "email": account.email,
     "role": account_type
-  }), 201
+  }), status.HTTP_201_CREATED
 
 ''' # ---------------------------------
   Description:
@@ -181,7 +181,7 @@ def logout():
   logout_user()
   return jsonify({
     "status": "success"
-  }), 201
+  }), status.HTTP_201_CREATED
 
 ''' # ---------------------------------
   Description:
@@ -210,7 +210,7 @@ def logout():
 def test():
     # Access the identity of the current user with get_jwt_identity
     user = get_jwt_identity()
-    return jsonify(logged_in_as=user), 200
+    return jsonify(logged_in_as=user), status.HTTP_200_OK
 
 ''' # ---------------------------------
   Description:
@@ -226,4 +226,4 @@ from flaskr.jwt import admin_required
 @admin_required
 def testadmin():
     user = get_jwt_identity()
-    return jsonify(logged_in_as=user), 200
+    return jsonify(logged_in_as=user), status.HTTP_200_OK

@@ -1,10 +1,13 @@
 import os
 import tempfile
 import pytest
+import json
+import ast
 
 from flaskr import create_app
 from json import dumps
 from flask import request, json
+from flask_api import status
 
 headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
 
@@ -39,16 +42,17 @@ def logout(client):
 def test_login_cycle(client):
   # test registration
   r = register(client, "testlogin", "testpsw", "test@test.com")
-  assert b'409' in r.data # user already exist
+  assert r.status_code == status.HTTP_409_CONFLICT
 
   # test logging in
   r = login(client, "testlogin", "testpsw")
-  assert r.json['results']['status'] == "success"
+  # r_dic = ast.literal_eval(r.data.decode("utf-8"))
+  assert r.status_code == status.HTTP_201_CREATED
 
   # test logging out
   r = logout(client)
-  assert r.json['results']['status'] == "success"
+  assert r.status_code == status.HTTP_201_CREATED
 
   # test logging in with bad credentials
   r = login(client, "notauser", "notauser")
-  assert b'Invalid Username or Password' in r.data
+  assert r.status_code == status.HTTP_401_UNAUTHORIZED
