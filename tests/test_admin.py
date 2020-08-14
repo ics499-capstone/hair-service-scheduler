@@ -2,7 +2,7 @@ from flask import request, json
 from flask_api import status
 
 from func import client, add_product, del_product, add_role, login, logout, register, auth_header
-from flaskr.models import UserAccountType
+from flaskr.models import db, UserAccountType, UserAccount
 
 # test: regular user trying to enlist a product for sale
 def test_user_addproduct(client):
@@ -54,6 +54,12 @@ def test_change_role(client):
   # ensure failure due to requiring admin permission
   assert r.status_code == status.HTTP_401_UNAUTHORIZED
 
+  notadmin = 'notadminaccount'
+
+  # register a new account
+  r = register(client, notadmin, "nonadmin", "notadminaccount@nonadmin.com")
+  assert r.status_code == status.HTTP_201_CREATED # account also fails for duplicate emails
+
   # log in admin account
   r = login(client, 'admintest', 'admintest')
   # extract the token and build new header with admin jwt
@@ -63,10 +69,11 @@ def test_change_role(client):
   r = add_role(client, 'admintest', UserAccountType.admin, headers)
   assert r.status_code == status.HTTP_417_EXPECTATION_FAILED
 
-  # register a new account
-  r = register(client, "nonadmin", "nonadmin", "nonadmin@nonadmin.com")
-  print(r.status_code)
-
   # elevate new account to employee
-  r = add_role(client, 'nonadmin', UserAccountType.employee, headers)
+  r = add_role(client, notadmin, UserAccountType.employee, headers)
   assert r.status_code == status.HTTP_200_OK
+
+  # delete new account (should prob write handler)
+  account = UserAccount.query.filter_by(username=notadmin).first()
+  db.session.delete(account)
+  db.session.commit()
