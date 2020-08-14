@@ -1,6 +1,7 @@
 import enum
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Integer, Enum, ForeignKey, types
+from sqlalchemy.orm import relationship, backref
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from flask_login import UserMixin
@@ -46,6 +47,9 @@ class UserAccount(UserMixin, db.Model):
   # register_date = db.Column(db.DateTime, nullable=False)
   # register_confirmed = db.Column(db.Boolean, nullable=False, default=False)
   # register_complete = db.Column(db.DateTime, nullable=True, default=False)
+
+  # relationships
+  products = relationship("product", secondary="cart")
 
   # contraints
   __table_args__ = (db.UniqueConstraint('username', 'email'),)
@@ -99,3 +103,13 @@ class Product(db.Model):
 
   def __repr__(self):
     return '(Product) {}:x{}:${}:desc={}'.format(self.name, self.quantity, self.price, self.description)
+
+# shopping cart to store products user wishes to buy
+class ShoppingCart(db.Model):
+  __tablename__ = "cart"
+  id = db.Column(db.Integer, primary_key=True)
+  account_id = db.Column(db.Integer, db.ForeignKey('useraccount.id'), nullable=False)
+  product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
+
+  useraccount = relationship(UserAccount, backref=backref('cart', cascade="all, delete-orphan"))
+  product = relationship(Product, backref=backref('cart', cascade="all, delete-orphan"))
