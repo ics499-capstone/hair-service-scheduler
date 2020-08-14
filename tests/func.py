@@ -62,4 +62,9 @@ def add_product(client, name, description, quantity, price, headers=headers):
   }
   return client.post(''.join((ADMIN_URL, 'addproduct')), data=dumps(payload), headers=headers)
 
+def del_product(client, name, headers=headers):
+  payload = {
+    'name' : name
+  }
+  return client.post(''.join((ADMIN_URL, 'delproduct')), data=dumps(payload), headers=headers)
 

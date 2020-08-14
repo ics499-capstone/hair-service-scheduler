@@ -15,7 +15,7 @@ bp = Blueprint('admin', __name__, url_prefix=API_URL)
     note: this endpoint does not increase the quantity
 
   Endpoint:
-    /admin/addproduct
+    api/admin/addproduct
 
   Parameters:
     name (string):
@@ -62,3 +62,49 @@ def addproduct():
     "status": "success",
   }
   return jsonify({"results": result}), status.HTTP_201_CREATED
+
+''' # ---------------------------------
+  Description:
+    removes a product to the system
+
+  Endpoint:
+    api/admin/remproduct
+
+  Parameters:
+    name (string):
+
+  Permission:
+    admins
+
+''' # ---------------------------------
+@bp.route('/delproduct', methods=['POST'])
+@admin_required
+def delproduct():
+  json = request.get_json()
+  transaction_keys = ['name']
+  if (
+      not all (key in json for key in transaction_keys) or
+      not request.is_json
+     ):
+    return 'Missing fields', status.HTTP_400_BAD_REQUEST
+
+  # get the db handle and Product model
+  from flaskr.models import db, Product
+
+  # get the name from the payload
+  name = request.get_json()['name']
+  # check if a product with that name exists
+  product = Product.query.filter_by(name=name).one()
+  if not product:
+    return 'Product does not exist', status.HTTP_400_BAD_REQUEST
+
+  # delete the product
+  db.session.delete(product)
+  db.session.commit()
+
+  console.debug('{} deleted!'.format(product))
+
+  result = {
+    "status": "success",
+  }
+  return jsonify({"results": result}), status.HTTP_200_OK

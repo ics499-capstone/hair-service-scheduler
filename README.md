@@ -26,6 +26,9 @@ This is an application that hosts a variety of services for hair service admins.
 - ```flask db migrate -m <msg>```
 - ```flask db upgrade```
 
+### Make flask project
+- ```pip install --editable .```
+
 ### Run tests
 - ```pytest -v```
 
