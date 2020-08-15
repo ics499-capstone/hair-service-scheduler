@@ -69,8 +69,7 @@ def create_app(test_config=None):
   app.register_blueprint(auth.bp)
   app.register_blueprint(admin.bp)
   app.register_blueprint(product.bp)
-  #app.register_blueprint(data.bp)
-  #app.register_blueprint(swagger.bp, url_prefix=swagger.DOC_ENPOINT)
+  app.register_blueprint(data.bp)
   app.register_blueprint(swagger.bp)
 
   from flaskr.jwt import jwt
