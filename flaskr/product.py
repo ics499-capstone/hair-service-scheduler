@@ -144,4 +144,38 @@ def getcart():
   return jsonify(cart=arr), status.HTTP_200_OK
 
 
-  
+''' # ---------------------------------
+  Description:
+    delete an item from the cart (AKA: remove from cart)
+
+  Endpoint:
+    api/product/delproduct/<int>
+
+  Permission:
+    customer
+''' # ---------------------------------
+@bp.route('/delete/<int:product_id>', methods=['DELETE'])
+@client_required
+def delete(product_id):
+  from flaskr.models import db, Product, UserAccount, ShoppingCart
+
+  # get the user's account id (identity bounded to username)
+  user = UserAccount.query.filter_by(username=get_jwt_identity()).first()
+
+  # try to find if user have the item in the cart
+  product_cart = ShoppingCart.query \
+                 .filter_by(product_id=product_id) \
+                 .filter_by(account_id=user.id) \
+                 .first()
+
+  if product_cart is None:
+    # no further actions needed
+    return 'Product not in cart', status.HTTP_400_BAD_REQUEST
+  else:
+    # remove from cart
+    db.session.delete(product_cart)
+    db.session.commit()
+
+  return jsonify({
+    "status": "success"
+  }), status.HTTP_200_OK
