@@ -4,6 +4,9 @@ from flask_api import status
 # from flask_jwt import get_jwt_identity
 from flask_jwt_extended import get_jwt_identity
 
+import logging
+console = logging.getLogger('console')
+
 API_URL = '/api/product/'
 
 bp = Blueprint('product', __name__, url_prefix=API_URL)
@@ -44,14 +47,13 @@ def addcart():
     return 'Product does not exist', status.HTTP_400_BAD_REQUEST
 
   # check if the quantity exceeds what is available
-  print('Amount user want: {}'.format(quantity))
-  print('Amount in stock: {}'.format(product.quantity))
+  console.debug('Amount user want: {}'.format(quantity))
+  console.debug('Amount in stock: {}'.format(product.quantity))
   if quantity > product.quantity:
     return 'Insufficient quantity added to cart', status.HTTP_400_BAD_REQUEST
 
   # get the user's account id (identity bounded to username)
   user = UserAccount.query.filter_by(username=get_jwt_identity()).first()
-  # print(user.username)
 
   # try to find if user already have the item in the cart
   product_cart = ShoppingCart.query \
@@ -63,7 +65,7 @@ def addcart():
   if product_cart is None:
     product_cart = ShoppingCart(user.id, product_id, quantity)
   else:
-    print('Amount user already have: {}'.format(product_cart.quantity))
+    console.debug('Amount user already have: {}'.format(product_cart.quantity))
     # if the quantity wanted + the quantity inside cart exceeds the quantity available
     if (product_cart.quantity + quantity) > product.quantity:
       # assign all quantity available to the user's cart
@@ -72,7 +74,7 @@ def addcart():
       # otherwise just add the remaining
       product_cart.quantity = product_cart.quantity + quantity
   
-  print('Total amount user now have in cart: {}'.format(product_cart.quantity))
+  console.debug('Total amount user now have in cart: {}'.format(product_cart.quantity))
   
   db.session.add(product_cart)
   db.session.flush()

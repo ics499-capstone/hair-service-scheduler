@@ -2,6 +2,9 @@ from flask import Blueprint, request, json, jsonify
 from flaskr.jwt import admin_required
 from flask_api import status
 
+import logging
+console = logging.getLogger('console')
+
 API_URL = '/api/admin/'
 
 bp = Blueprint('admin', __name__, url_prefix=API_URL)

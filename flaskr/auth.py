@@ -48,7 +48,7 @@ def register():
     return 'Missing fields', status.HTTP_400_BAD_REQUEST
 
   # get DB context from models
-  from flaskr.models import db, UserAccount, User
+  from flaskr.models import db, UserAccount
 
   username = request.get_json()['username']
   email = request.get_json()['email']
