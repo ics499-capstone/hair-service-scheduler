@@ -18,6 +18,7 @@ def create_app(test_config=None):
     SQLALCHEMY_TRACK_MODIFICATIONS=False,
     SQLALCHEMY_DATABASE_URI='sqlite:///app.db',
     JWT_SECRET_KEY='hide-this-for-dear-life',
+    SWAGGER_UI_DOC_EXPANSION = 'list',
   )
 
   if test_config is None:
@@ -52,6 +53,10 @@ def create_app(test_config=None):
   from flaskr.auth import login_manager
   login_manager.init_app(app)
 
+  # register the API
+  from flaskr.swagger import api
+  api.init_app(app)
+
   # registers the custom commands with flask
   from . import commands
   commands.init_app(app)
@@ -60,10 +65,13 @@ def create_app(test_config=None):
   migrate = Migrate(app, db)
 
   # registers the api blueprints with flask
-  from . import auth, admin, product
+  from . import auth, admin, product, data, swagger
   app.register_blueprint(auth.bp)
   app.register_blueprint(admin.bp)
   app.register_blueprint(product.bp)
+  #app.register_blueprint(data.bp)
+  #app.register_blueprint(swagger.bp, url_prefix=swagger.DOC_ENPOINT)
+  app.register_blueprint(swagger.bp)
 
   from flaskr.jwt import jwt
   jwt.init_app(app)

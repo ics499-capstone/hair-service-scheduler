@@ -20,7 +20,7 @@ class SqliteNumeric(types.TypeDecorator):
 db = SQLAlchemy()
 
 # over-ride the default Numeric
-db.Numeric = SqliteNumeric
+# db.Numeric = SqliteNumeric
 
 class UserAccountType(int, enum.Enum):
   customer = 0
@@ -102,3 +102,33 @@ class ShoppingCart(db.Model):
     self.account_id = account_id
     self.product_id = product_id
     self.quantity = quantity
+
+# -----------------------------------------------------------
+# service table
+# -----------------------------------------------------------
+class Service(db.Model):
+  __tablename__ = "service"
+  id = db.Column(db.Integer, primary_key=True)
+  name = db.Column(db.String(64), nullable=True)
+  description = db.Column(db.String(512), nullable=True)
+  price = db.Column(db.Numeric(5, 2), nullable=True)
+
+  def __init__(self, name, description, price):
+    self.name = name
+    self.description = description
+    self.price = price
+
+# -----------------------------------------------------------
+# Appointment (AKA Scheduler)
+# -----------------------------------------------------------
+class Appointment(db.Model):
+  __tablename__ = "appointment"
+  id = db.Column(db.Integer, primary_key=True)
+  account_id = db.Column(db.Integer, db.ForeignKey('useraccount.id'), nullable=False)
+  service_id = db.Column(db.Integer, db.ForeignKey('service.id'), nullable=False)
+  date = db.Column(db.DateTime)
+
+  def __init__(self, account_id, service_id, date):
+    self.account_id = account_id
+    self.service_id = service_id
+    self.date = date

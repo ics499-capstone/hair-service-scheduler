@@ -23,6 +23,7 @@ This is an application that hosts a variety of services for hair service admins.
   
 ### Migrations
 - ```flask db init```
+- ```flask db stamp head```
 - ```flask db migrate -m <msg>```
 - ```flask db upgrade```
 

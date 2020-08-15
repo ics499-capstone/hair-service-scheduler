@@ -14,3 +14,7 @@ Flask-JWT-Extended==3.24.1
 PyYAML==5.3.1
 Flask-API==2.0
 marshmallow-sqlalchemy==0.23.1
+flask-restful-swagger==0.20.2
+flask-swagger-ui==3.25.0
+flask-restplus==0.13.0
+Werkzeug==0.16.1
