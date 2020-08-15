@@ -2,6 +2,7 @@ from flask import Blueprint, request, json, jsonify
 from flaskr.jwt import client_required
 from flask_api import status
 from flask_jwt_extended import get_jwt_identity
+from flaskr.models import db, Product, UserAccount, ShoppingCart
 
 import json
 import logging
@@ -30,13 +31,8 @@ bp = Blueprint('product', __name__, url_prefix=API_URL)
 def addcart():
   json = request.get_json()
   transaction_keys = ['product_id', 'quantity']
-  if (
-      not all (key in json for key in transaction_keys) or
-      not request.is_json
-     ):
+  if (not all (key in json for key in transaction_keys) or not request.is_json):
     return 'Missing fields', status.HTTP_400_BAD_REQUEST
-
-  from flaskr.models import db, Product, UserAccount, ShoppingCart
 
   product_id = request.get_json()['product_id']
   quantity = request.get_json()['quantity']
@@ -101,25 +97,10 @@ def addcart():
 @bp.route('/getcart', methods=['POST'])
 @client_required
 def getcart():
-  from flaskr.models import db, Product, UserAccount, ShoppingCart
-
   # get the user's account id (identity bounded to username)
   user = UserAccount.query.filter_by(username=get_jwt_identity()).first()
 
   # get all product in users cart
-  '''
-  cart = ShoppingCart \
-          .query \
-          .join(Product, ShoppingCart.product_id == Product.id) \
-          .add_columns( \
-              ShoppingCart.quantity, \
-              Product.name, \
-              Product.description, \
-              Product.price, \
-              Product.image) \
-          .filter(ShoppingCart.account_id == user.id) \
-          .all()
-  '''
   query = (db.session.query(ShoppingCart, Product) \
           .join(Product, ShoppingCart.product_id == Product.id) \
           .add_columns( \
@@ -157,8 +138,6 @@ def getcart():
 @bp.route('/delete/<int:product_id>', methods=['DELETE'])
 @client_required
 def delete(product_id):
-  from flaskr.models import db, Product, UserAccount, ShoppingCart
-
   # get the user's account id (identity bounded to username)
   user = UserAccount.query.filter_by(username=get_jwt_identity()).first()
 
