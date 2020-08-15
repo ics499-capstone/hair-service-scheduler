@@ -4,6 +4,8 @@ from flask import Flask
 from flask_migrate import Migrate
 from flask_cors import CORS
 
+import logging
+
 # app factory func
 def create_app(test_config=None):
   # create and configure the app
@@ -33,9 +35,10 @@ def create_app(test_config=None):
   log_conf = yaml.safe_load(open('./logging.yaml'))
   # use the log configuration
   logging.config.dictConfig(log_conf)
+
   # init a log instance
-  console = logging.getLogger('console')
-  console.debug('Starting application')
+  log = logging.getLogger('werkzeug')
+  log.disabled = False
 
   # register the SQLAlchemy instance with flask
   from flaskr.models import db
@@ -53,9 +56,10 @@ def create_app(test_config=None):
   migrate = Migrate(app, db)
 
   # registers the api blueprints with flask
-  from . import auth, admin
+  from . import auth, admin, product
   app.register_blueprint(auth.bp)
   app.register_blueprint(admin.bp)
+  app.register_blueprint(product.bp)
 
   from flaskr.jwt import jwt
   jwt.init_app(app)
