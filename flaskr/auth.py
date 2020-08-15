@@ -150,8 +150,8 @@ def login():
   # user = User.query.filter_by(account_id=account.id).first()
   account_type = dumps(account.type)
 
-  # create JSON web token
-  access_token = create_access_token(identity=username)
+  # create JSON web token (never expires)
+  access_token = create_access_token(username, expires_delta=False)
 
   return jsonify({
     "id": account.id,

@@ -1,9 +1,9 @@
 from flask import Blueprint, request, json, jsonify
 from flaskr.jwt import client_required
 from flask_api import status
-# from flask_jwt import get_jwt_identity
 from flask_jwt_extended import get_jwt_identity
 
+import json
 import logging
 console = logging.getLogger('console')
 
@@ -84,6 +84,64 @@ def addcart():
     "status": "success",
     "quantity": product_cart.quantity # return the amount in cart back
   }), status.HTTP_202_ACCEPTED
+
+''' # ---------------------------------
+  Description:
+    return the users cart
+
+  Endpoint:
+    api/product/getcart
+
+  Permission:
+    customer
+
+  Return:
+
+''' # ---------------------------------
+@bp.route('/getcart', methods=['POST'])
+@client_required
+def getcart():
+  from flaskr.models import db, Product, UserAccount, ShoppingCart
+
+  # get the user's account id (identity bounded to username)
+  user = UserAccount.query.filter_by(username=get_jwt_identity()).first()
+
+  # get all product in users cart
+  '''
+  cart = ShoppingCart \
+          .query \
+          .join(Product, ShoppingCart.product_id == Product.id) \
+          .add_columns( \
+              ShoppingCart.quantity, \
+              Product.name, \
+              Product.description, \
+              Product.price, \
+              Product.image) \
+          .filter(ShoppingCart.account_id == user.id) \
+          .all()
+  '''
+  query = (db.session.query(ShoppingCart, Product) \
+          .join(Product, ShoppingCart.product_id == Product.id) \
+          .add_columns( \
+              ShoppingCart.quantity, \
+              Product.name, \
+              Product.description, \
+              Product.price, \
+              Product.image) \
+          .filter(ShoppingCart.account_id == user.id))
+  data = query.all()
+
+  arr = [] # array of dictionary
+  for i in data:
+    arr.append({
+      'quantity' : i[0].quantity,
+      'name' : i[1].name,
+      'description' : i[1].description,
+      'price' : float(i[1].price),
+      'image' : i[1].image
+    })
+
+  return jsonify(cart=arr), status.HTTP_200_OK
 
 
   

@@ -44,6 +44,10 @@ def create_app(test_config=None):
   from flaskr.models import db
   db.init_app(app)
 
+  # register the Marshmallow instance with flask
+  from flaskr.schemas import ma
+  ma.init_app(app)
+
   # register the Login_Manager instance with flask
   from flaskr.auth import login_manager
   login_manager.init_app(app)

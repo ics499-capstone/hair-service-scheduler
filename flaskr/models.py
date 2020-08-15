@@ -58,8 +58,8 @@ class UserAccount(UserMixin, db.Model): # inherit is_authenticated, is_active, i
     self.type = UserAccountType.customer
     # self.register_date = datetime.now()
 
-  def __repr__(self):
-    return '(UserAccoount) {}:{}:admin={}'.format(self.username, self.email, self.type)
+  #def __repr__(self):
+    #return '(UserAccoount) {}:{}:admin={}'.format(self.username, self.email, self.type)
 
   def authenticate(self, password):
     return check_password_hash(self.password_hash, password)
@@ -83,8 +83,8 @@ class Product(db.Model):
     self.quantity = quantity
     self.price = price
 
-  def __repr__(self):
-    return '(Product) {}:x{}:${}:desc={}'.format(self.name, self.quantity, self.price, self.description)
+  #def __repr__(self):
+    #return '(Product) {}:x{}:${}:desc={}'.format(self.name, self.quantity, self.price, self.description)
 
 # -----------------------------------------------------------
 # cart table
