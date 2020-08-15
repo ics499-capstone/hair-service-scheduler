@@ -2,6 +2,8 @@ from flask import Blueprint, request, json, jsonify
 from flaskr.jwt import admin_required
 from flask_api import status
 
+from flaskr.models import db, UserAccount, UserAccountType, Product, Service
+
 import logging
 console = logging.getLogger('console')
 
@@ -34,13 +36,8 @@ bp = Blueprint('admin', __name__, url_prefix=API_URL)
 def addproduct():
   json = request.get_json()
   transaction_keys = ['name', 'description', 'quantity', 'price']
-  if (
-      not all (key in json for key in transaction_keys) or
-      not request.is_json
-     ):
+  if (not all (key in json for key in transaction_keys) or not request.is_json):
     return 'Missing fields', status.HTTP_400_BAD_REQUEST
-
-  from flaskr.models import db, Product
 
   name = request.get_json()['name']
   description = request.get_json()['description']
@@ -82,14 +79,8 @@ def addproduct():
 def delproduct():
   json = request.get_json()
   transaction_keys = ['name']
-  if (
-      not all (key in json for key in transaction_keys) or
-      not request.is_json
-     ):
+  if (not all (key in json for key in transaction_keys) or not request.is_json):
     return 'Missing fields', status.HTTP_400_BAD_REQUEST
-
-  # get the db handle and Product model
-  from flaskr.models import db, Product
 
   # get the name from the payload
   name = request.get_json()['name']
@@ -129,14 +120,8 @@ def delproduct():
 def addrole():
   json = request.get_json()
   transaction_keys = ['username', 'role']
-  if (
-      not all (key in json for key in transaction_keys) or
-      not request.is_json
-     ):
-    return 'Missing fields', 11
-
-  # get the db handle and UserAccount, UserAccountType model
-  from flaskr.models import db, UserAccount, UserAccountType
+  if (not all (key in json for key in transaction_keys) or not request.is_json):
+    return 'Missing fields', status.HTTP_400_BAD_REQUEST
 
   # get the values from payload
   username = request.get_json()['username']
@@ -165,3 +150,48 @@ def addrole():
     "status": "success",
   }
   return jsonify({"results": result}), status.HTTP_200_OK
+
+''' # ---------------------------------
+  Description:
+    addservice
+
+  Endpoint:
+    api/admin/addservice
+
+  Parameters:
+    name
+    description
+    price
+
+  Permission:
+    admins
+
+''' # ---------------------------------
+@bp.route('/addservice', methods=['POST'])
+@admin_required
+def addservice():
+  json = request.get_json()
+  transaction_keys = ['name', 'description', 'price']
+  if (not all (key in json for key in transaction_keys) or not request.is_json):
+    return 'Missing fields', status.HTTP_400_BAD_REQUEST
+
+  # get the name from the payload
+  name = request.get_json()['name']
+  description = request.get_json()['description']
+  price = request.get_json()['price']
+
+
+  # check if a Service with that name exists
+  service = Service.query.filter_by(name=name).one()
+  if service:
+    return 'Service already exist', status.HTTP_409_CONFLICT
+
+  # create the service
+  service = Service(name, description, price)
+  db.session.add(service)
+  db.session.commit()
+
+  result = {
+    "status": "success",
+  }
+  return jsonify({"results": result}), status.HTTP_201_CREATED
